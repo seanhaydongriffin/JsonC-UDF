@@ -41,27 +41,18 @@ Global Const $tagJSONC_OBJECT = _
 ; _JsonC_TokenerParse
 ; _JsonC_ObjectToJsonString
 ; _JsonC_ObjectIsType
-; _JsonC_ObjectObjectGet
+; _JsonC_ObjectGetType
+; _JsonC_ObjectGetBoolean
+; _JsonC_ObjectGetDouble
+; _JsonC_ObjectGetInteger
+; _JsonC_ObjectGetObject
+; _JsonC_ObjectGetArray
 ; _JsonC_ObjectGetString
+; _JsonC_ObjectGetValue
+; _JsonC_ObjectObjectGet
 ; _JsonC_ObjectArrayLength
 ; _JsonC_ObjectArrayGetIndex
-; _JsonC_ErrCode
-; _JsonC_ErrMsg
-; _JsonC_Display2DResult
-; _JsonC_FetchData
-; _JsonC_Query
-; _JsonC_SetTimeout
-; _JsonC_SafeMode
-; _JsonC_QueryFinalize
-; _JsonC_QueryReset
-; _JsonC_FetchNames
-; _JsonC_QuerySingleRow
-; _JsonC_JsonCExe
-; _JsonC_Encode
-; _JsonC_Escape
-; _JsonC_FastEncode
-; _JsonC_FastEscape
-; _JsonC_GetTableData2D
+; _JsonC_ObjectArrayGetObjects
 ; ===============================================================================================================================
 
 
@@ -167,6 +158,28 @@ EndFunc
 
 
 ; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetType
+; Description ...: Checks if the json object is of a given type
+; Syntax ........: _JsonC_ObjectGetType($tObject)
+; Parameters ....: $tObject      - Get the type of the json object.
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetType($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "int", "json_object_get_type", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectIsType
 ; Description ...: Checks if the json object is of a given type
 ; Syntax ........: _JsonC_ObjectIsType($tObject)
@@ -184,6 +197,28 @@ EndFunc
 ; =================================================================================================
 Func _JsonC_ObjectIsType($tObject, $iType)
 	Local $avRval = DllCall($__g_hDll_JsonC, "int", "json_object_is_type", "ptr", DllStructGetPtr($tObject), "int", $iType)
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_TypeToName
+; Description ...: Checks if the json object is of a given type
+; Syntax ........: _JsonC_TypeToName($iType)
+; Parameters ....: $tObject      - Get the type of the json object.
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_TypeToName($iType)
+	Local $avRval = DllCall($__g_hDll_JsonC, "str", "json_type_to_name", "int", $iType)
 	If @error Then Return SetError(1, @error, 0) ; DllCall error
 	Return $avRval[0]
 EndFunc
@@ -214,6 +249,116 @@ Func _JsonC_ObjectObjectGet($tObject, $sKey)
 EndFunc
 
 ; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetBoolean
+; Description ...: Get the json bool value of a json object
+; Syntax ........: _JsonC_ObjectGetBoolean($tObject)
+; Parameters ....: $tObject      - the json object instance
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetBoolean($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "boolean", "json_object_get_boolean", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetDouble
+; Description ...: Get the double floating point value of a json object
+; Syntax ........: _JsonC_ObjectGetDouble($tObject)
+; Parameters ....: $tObject      - the json object instance
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetDouble($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "double", "json_object_get_double", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetInt
+; Description ...: Checks if the json object is of a given type
+; Syntax ........: _JsonC_ObjectGetInt($tObject)
+; Parameters ....: $tObject      - the json object instance
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetInteger($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "int", "json_object_get_int", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetObject
+; Description ...: Get the hashtable of a json object of type json type object
+; Syntax ........: _JsonC_ObjectGetObject($tObject)
+; Parameters ....: $tObject      - the json object instance
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetObject($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_object", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetArray
+; Description ...: Get the arraylist of a json object of type json type array
+; Syntax ........: _JsonC_ObjectGetArray($tObject)
+; Parameters ....: $tObject      - the json object instance
+;
+;                  [$i_Os]        - search position where to start (normally don't touch!)
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetArray($tObject)
+	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_array", "ptr", DllStructGetPtr($tObject))
+	If @error Then Return SetError(1, @error, 0) ; DllCall error
+	Return $avRval[0]
+EndFunc
+
+; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetString
 ; Description ...: Checks if the json object is of a given type
 ; Syntax ........: _JsonC_ObjectGetString($tObject)
@@ -236,9 +381,9 @@ Func _JsonC_ObjectGetString($tObject)
 EndFunc
 
 ; #FUNCTION# ======================================================================================
-; Name ..........: _JsonC_ObjectGetInt
-; Description ...: Checks if the json object is of a given type
-; Syntax ........: _JsonC_ObjectGetInt($tObject)
+; Name ..........: _JsonC_ObjectGetValue
+; Description ...: Get the value of a json object of any type
+; Syntax ........: _JsonC_ObjectGetValue($tObject)
 ; Parameters ....: $tObject      - the json object instance
 ;
 ;                  [$i_Os]        - search position where to start (normally don't touch!)
@@ -251,10 +396,24 @@ EndFunc
 ;                              = 4 - delimiter or object end expected but not gained
 ; Author ........: SeanGriffin
 ; =================================================================================================
-Func _JsonC_ObjectGetInt($tObject)
-	Local $avRval = DllCall($__g_hDll_JsonC, "int", "json_object_get_int", "ptr", DllStructGetPtr($tObject))
-	If @error Then Return SetError(1, @error, 0) ; DllCall error
-	Return $avRval[0]
+Func _JsonC_ObjectGetValue($tObject)
+	Switch _JsonC_ObjectGetType($tObject)
+		Case $JSONC_TYPE_NULL
+			Return ""
+		Case $JSONC_TYPE_BOOLEAN
+			Return _JsonC_ObjectGetBoolean($tObject)
+		Case $JSONC_TYPE_DOUBLE
+			Return _JsonC_ObjectGetDouble($tObject)
+		Case $JSONC_TYPE_INT
+			Return _JsonC_ObjectGetInteger($tObject)
+		Case $JSONC_TYPE_OBJECT
+			Return _JsonC_ObjectGetObject($tObject)
+		Case $JSONC_TYPE_ARRAY
+			Return _JsonC_ObjectGetArray($tObject)
+		Case $JSONC_TYPE_STRING
+			Return _JsonC_ObjectGetString($tObject)
+	EndSwitch
+	Return SetError(1, @error, 0)
 EndFunc
 
 ; #FUNCTION# ======================================================================================
@@ -299,6 +458,32 @@ Func _JsonC_ObjectArrayGetIndex($tObject, $iIndex)
 	Local $tJsonObject = DllStructCreate($tagJSONC_OBJECT, $avRval[0])
 	If @error Then Return SetError(1, @error, 0) ; DllCall error
 	Return $tJsonObject
+EndFunc
+
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectArrayGetObjects
+; Description ...: Get all the json objects from an array
+; Syntax ........: _JsonC_ObjectArrayGetObjects($tObject, $iIndex)
+; Parameters ....: $tObject      - an AutoIt array of json objects
+; Return values .: Success - return a non-NULL json_object if a valid JSON value is found
+;                       @extended = next string offset
+;                  Failure - Return a "" (NULL) and set @error to:
+;                       @error = 1 - part is not json-syntax
+;                              = 2 - key name in object part is not json-syntax
+;                              = 3 - value in object is not correct json
+;                              = 4 - delimiter or object end expected but not gained
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectArrayGetObjects($tObject)
+
+	$ArrayLength = _JsonC_ObjectArrayLength($tObject)
+	Dim $avRval[$ArrayLength]
+
+	for $i = 0 to _JsonC_ObjectArrayLength($tObject) - 1
+		$avRval[$i] = _JsonC_ObjectArrayGetIndex($tObject, $i)
+	Next
+
+	Return $avRval
 EndFunc
 
 ; #FUNCTION# ======================================================================================
