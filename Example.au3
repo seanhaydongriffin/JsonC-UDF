@@ -5,14 +5,38 @@
 #include "JsonC.au3"
 
 
-_JsonC_Startup("json-c2.dll")
+_JsonC_Startup("json-c.dll")
 
-$fred = _JsonC_TokenerParse('{"name":"Alice","age":30,"friends":["Paula", "Cindy", "Dorothy"]}')
-$tom = _JsonC_ObjectToJsonString($fred)
+$JsonObj = _JsonC_TokenerParse('{"name":"Alice","age":30,"friends":["Paula", "Cindy", "Dorothy"]}')
+$tom = _JsonC_ObjectToJsonString($JsonObj)
 ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tom = ' & $tom & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-$tmp = _JsonC_ObjectIsType($fred, $JSONC_TYPE_OBJECT)
+$tmp = _JsonC_ObjectIsType($JsonObj, $JSONC_TYPE_OBJECT)
 ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+$NameObj = _JsonC_ObjectObjectGet($JsonObj, "name")
+$tmp = _JsonC_ObjectIsType($NameObj, $JSONC_TYPE_STRING)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+$tmp = _JsonC_ObjectGetString($NameObj)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+$AgeObj = _JsonC_ObjectObjectGet($JsonObj, "age")
+$tmp = _JsonC_ObjectIsType($AgeObj, $JSONC_TYPE_INT)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+$tmp = _JsonC_ObjectGetInt($AgeObj)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+$FriendsObj = _JsonC_ObjectObjectGet($JsonObj, "friends")
+$tmp = _JsonC_ObjectIsType($FriendsObj, $JSONC_TYPE_ARRAY)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+$NumberOfFriends = _JsonC_ObjectArrayLength($FriendsObj)
+ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+for $i = 0 to $NumberOfFriends - 1
+	$Friend = _JsonC_ObjectArrayGetIndex($FriendsObj, $i)
+	$tmp = _JsonC_ObjectGetString($Friend)
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $tmp = ' & $tmp & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+Next
 
 _JsonC_Shutdown()
 
