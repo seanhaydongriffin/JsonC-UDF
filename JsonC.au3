@@ -7,7 +7,7 @@
 ; Language ......: English
 ; Description ...: Functions for constructing JSON objects using JSON-C (https://github.com/json-c/json-c).
 ; Author(s) .....: Sean Griffin
-; Dll ...........: json-c.dll
+; Dll ...........: json-c.dll (based on v0.18-20240915)
 ; ===============================================================================================================================
 
 ; #VARIABLES# ===================================================================================================================
