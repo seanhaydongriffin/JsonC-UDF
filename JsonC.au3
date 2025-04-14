@@ -86,9 +86,9 @@ Global Const $tagJSONC_OBJECT = _
 ;                              = 2 - key name in object part is not json-syntax
 ;                              = 3 - value in object is not correct json
 ;                              = 4 - delimiter or object end expected but not gained
-; Author ........: AspirinJunkie
+; Author ........: SeanGriffin
 ; =================================================================================================
-Func _JsonC_Startup($sDll_Filename = "") ;, $bUTF8ErrorMsg = False, $iForceLocal = 0, $hPrintCallback = $__g_hPrintCallback_SQLite, $bAutoItTypeConversion = False)
+Func _JsonC_Startup($sDll_Filename = "")
 	If $sDll_Filename = Default Or $sDll_Filename = -1 Then $sDll_Filename = ""
 	If $sDll_Filename = "" Then $sDll_Filename = "json-c.dll"
 	Local $iExtended = 0
@@ -665,7 +665,7 @@ EndFunc
 ;                              = 2 - key name in object part is not json-syntax
 ;                              = 3 - value in object is not correct json
 ;                              = 4 - delimiter or object end expected but not gained
-; Author ........: AspirinJunkie
+; Author ........: SeanGriffin
 ; =================================================================================================
 Func _JsonC_Shutdown()
 	If $__g_hDll_JsonC > 0 Then DllClose($__g_hDll_JsonC)
