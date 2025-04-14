@@ -263,10 +263,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetBoolean
-; Description ...: Get the json bool value of a json object
+; Description ...: Get the $JSONC_TYPE_BOOLEAN value of a json object
 ; Syntax ........: _JsonC_ObjectGetBoolean($pObject)
 ; Parameters ....: $pObject     - the json object instance
-; Return values .: Success 		- a json_bool
+; Return values .: Success 		- a boolean
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -279,7 +279,7 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetDouble
-; Description ...: Get the double floating point value of a json object
+; Description ...: Get the $JSONC_TYPE_DOUBLE value of a json object
 ; Syntax ........: _JsonC_ObjectGetDouble($pObject)
 ; Parameters ....: $pObject     - the json object instance
 ; Return values .: Success 		- return a double floating point number
@@ -295,7 +295,7 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetInt
-; Description ...: Get the int value of a json object
+; Description ...: Get the $JSONC_TYPE_INT value of a json object
 ; Syntax ........: _JsonC_ObjectGetInt($pObject)
 ; Parameters ....: $pObject     - the json object instance
 ; Return values .: Success 		- return an int
@@ -325,20 +325,6 @@ Func _JsonC_ObjectGetObject($pObject)
 	Return $avRval[0]
 EndFunc
 
-#cs
-Func _JsonC_ObjectGetObject2($tObject)
-	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_object", "ptr", $tObject)
-	If @error Then Return SetError(1, @error, "") ; DllCall error
-	Return $avRval[0]
-EndFunc
-#ce
-
-
-
-
-
-
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetArray
 ; Description ...: Get the arraylist of a json object of type json type array
@@ -355,15 +341,12 @@ Func _JsonC_ObjectGetArray($pObject)
 	Return $avRval[0]
 EndFunc
 
-
-
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ArrayListLength
-; Description ...: Get the arraylist of a json object of type json type array
+; Description ...: Get the length of an arraylist
 ; Syntax ........: _JsonC_ArrayListLength($tArrayList)
-; Parameters ....: $tArrayList  - the json object instance
-; Return values .: Success 		- return an arraylist
+; Parameters ....: $tArrayList  - the arraylist (from _JsonC_ObjectGetArray)
+; Return values .: Success 		- return the length of the arraylist
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -373,28 +356,20 @@ Func _JsonC_ArrayListLength($tArrayList)
 	Return $avRval[0]
 EndFunc
 
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ArrayListGetIndex
-; Description ...: Get the arraylist of a json object of type json type array
+; Description ...: Get the json object for an item in the arraylist
 ; Syntax ........: _JsonC_ArrayListGetIndex($tArrayList, $iIndex)
-; Parameters ....: $tArrayList  - the json object instance
-; Return values .: Success 		- return an arraylist
+; Parameters ....: $tArrayList  - the arraylist (from _JsonC_ObjectGetArray)
+; Return values .: Success 		- return the json object
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
 Func _JsonC_ArrayListGetIndex($tArrayList, $iIndex)
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $iIndex = ' & $iIndex & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "array_list_get_idx", "ptr", $tArrayList, "int", $iIndex)
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : @error = ' & @error & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 	If @error Then Return SetError(1, @error, "") ; DllCall error
 	Return $avRval[0]
 EndFunc
-
-
-
-
-
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectGetString
@@ -427,11 +402,7 @@ Func _JsonC_ObjectGetValue($pObject)
 	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_value", "ptr", $pObject, "int*", $iType, "int*", $iLength)
 	If @error Then Return SetError(1, @error, "") ; DllCall error
 	$iType = $avRval[2]
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $iType = ' & $iType & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 	$iLength = $avRval[3]
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $iLength = ' & $iLength & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $avRval[0] = ' & $avRval[0] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-	;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $avRval[1] = ' & $avRval[1] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 	Switch $iType
 		Case $JSONC_TYPE_NULL
 			Return ""
@@ -448,42 +419,20 @@ Func _JsonC_ObjectGetValue($pObject)
 		Case $JSONC_TYPE_STRING
 			Return DllStructGetData(DllStructCreate("CHAR[" & $iLength & "]", $avRval[0]), 1)
 	EndSwitch
-
 	Return SetError(1, @error, "")
 EndFunc
 
-#cs
-Func _JsonC_ObjectGetValue2($tObject)
-	Local $iType, $iLength
-	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_value", "ptr", $tObject, "int*", $iType, "int*", $iLength)
-	If @error Then Return SetError(1, @error, "") ; DllCall error
-	$iType = $avRval[2]
-	$iLength = $avRval[3]
-	Switch $iType
-		Case $JSONC_TYPE_NULL
-			Return ""
-		Case $JSONC_TYPE_BOOLEAN
-			Return DllStructGetData(DllStructCreate("BOOLEAN", $avRval[0]), 1)
-		Case $JSONC_TYPE_DOUBLE
-			Return DllStructGetData(DllStructCreate("DOUBLE", $avRval[0]), 1)
-		Case $JSONC_TYPE_INT
-			Return DllStructGetData(DllStructCreate("INT", $avRval[0]), 1)
-		Case $JSONC_TYPE_OBJECT
-			Return DllStructGetData(DllStructCreate("PTR", $avRval[0]), 1)
-		Case $JSONC_TYPE_ARRAY
-			Return DllStructGetData(DllStructCreate("PTR", $avRval[0]), 1)
-		Case $JSONC_TYPE_STRING
-			$eee = DllStructCreate("CHAR[" & $iLength & "]", $avRval[0])
-			$fff = DllStructGetData($eee, 1)
-			$eee = 0
-			return $fff
-	EndSwitch
-
-	Return SetError(1, @error, "")
-EndFunc
-#ce
-
-Func _JsonC_ObjectGetFieldValue($pObject, $sKey) ;, $bStringExpected = False)
+; #FUNCTION# ======================================================================================
+; Name ..........: _JsonC_ObjectGetFieldValue
+; Description ...: Get the value of a field in a json object
+; Syntax ........: _JsonC_ObjectGetFieldValue($pObject, $sKey)
+; Parameters ....: $pObject     - the json object instance
+;				   $sKey		- the object field name
+; Return values .: Success 		- return the value of the field
+;                  Failure 		- Return a "" (NULL) and set @error to 1
+; Author ........: SeanGriffin
+; =================================================================================================
+Func _JsonC_ObjectGetFieldValue($pObject, $sKey)
 	if IsPtr($pObject) = False Then $pObject = DllStructGetPtr($pObject)
 	Local $iType, $iLength
 	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_get_field_value", "ptr", $pObject, "str", $sKey, "int*", $iType, "int*", $iLength)
@@ -506,22 +455,15 @@ Func _JsonC_ObjectGetFieldValue($pObject, $sKey) ;, $bStringExpected = False)
 		Case $JSONC_TYPE_STRING
 			return DllStructGetData(DllStructCreate("CHAR[" & $iLength & "]", $avRval[0]), 1)
 	EndSwitch
-
 	Return SetError(1, @error, "")
 EndFunc
 
-
-
-
-
-
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewObject
-; Description ...: Create a new empty json object of type json_object
+; Description ...: Create a new empty json object of type $JSONC_TYPE_OBJECT
 ; Syntax ........: _JsonC_ObjectNewObject()
 ; Parameters ....:
-; Return values .: Success 		- return a json_object of type json_type_array
+; Return values .: Success 		- return a json object of type $JSONC_TYPE_OBJECT
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -535,10 +477,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewArray
-; Description ...: Create a new empty json object of type json_type_array
+; Description ...: Create a new empty json object of type $JSONC_TYPE_ARRAY
 ; Syntax ........: _JsonC_ObjectNewArray()
 ; Parameters ....:
-; Return values .: Success 		- return a json_object of type json_type_array
+; Return values .: Success 		- return a json object of type $JSONC_TYPE_ARRAY
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -552,10 +494,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectArrayAdd
-; Description ...: Add an element to the end of a json object of type json_type_array
+; Description ...: Add an element to the end of a json object of type $JSONC_TYPE_ARRAY
 ; Syntax ........: _JsonC_ObjectArrayAdd($pObject, $pObjectToAdd)
-; Parameters ....: $pObject     - the json object instance
-;				   $pObjectToAdd- the json object to add of type json_type_array
+; Parameters ....: $pObject     - the json object instance of type $JSONC_TYPE_ARRAY
+;				   $pObjectToAdd- the json object to add
 ; Return values .: Success 		- return an int
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
@@ -570,10 +512,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewBoolean
-; Description ...: Create a new empty json object of type json_type_boolean
+; Description ...: Create a new empty json object of type $JSONC_TYPE_BOOLEAN
 ; Syntax ........: _JsonC_ObjectNewBoolean($bBoolean)
 ; Parameters ....: $bBoolean   	- a Boolean TRUE or FALSE (0 or 1)
-; Return values .: Success 		- return a json_object of type json_type_boolean
+; Return values .: Success 		- return a json_object of type $JSONC_TYPE_BOOLEAN
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -587,10 +529,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewInt
-; Description ...: Create a new empty json object of type json_type_int
+; Description ...: Create a new empty json object of type $JSONC_TYPE_INT
 ; Syntax ........: _JsonC_ObjectNewInt($iInteger)
 ; Parameters ....: $iInteger    - the integer
-; Return values .: Success 		- return a json_object of type json_type_int
+; Return values .: Success 		- return a json_object of type $JSONC_TYPE_INT
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -604,10 +546,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewInt64
-; Description ...: Create a new empty json object of type json_type_int
+; Description ...: Create a new empty json object of type $JSONC_TYPE_INT
 ; Syntax ........: _JsonC_ObjectNewInt64($iInteger)
 ; Parameters ....: $iInteger    - the integer
-; Return values .: Success 		- return a json_object of type json_type_int
+; Return values .: Success 		- return a json_object of type $JSONC_TYPE_INT
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -621,10 +563,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewDouble
-; Description ...: Create a new empty json object of type json_type_double
+; Description ...: Create a new empty json object of type $JSONC_TYPE_DOUBLE
 ; Syntax ........: _JsonC_ObjectNewDouble($fDouble)
 ; Parameters ....: $fDouble     - the double
-; Return values .: Success 		- return a json_object of type json_type_double
+; Return values .: Success 		- return a json_object of type $JSONC_TYPE_DOUBLE
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -638,10 +580,10 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectNewString
-; Description ...: Create a new empty json object of type json_type_string
+; Description ...: Create a new empty json object of type $JSONC_TYPE_STRING
 ; Syntax ........: _JsonC_ObjectNewString($sString)
 ; Parameters ....: $sString     - the string
-; Return values .: Success 		- return a json_object of type json_type_string
+; Return values .: Success 		- return a json_object of type $JSONC_TYPE_STRING
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -655,7 +597,7 @@ EndFunc
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectArrayLength
-; Description ...: Get the length of a json object of type json_type_array
+; Description ...: Get the length of a json object of type $JSONC_TYPE_ARRAY
 ; Syntax ........: _JsonC_ObjectArrayLength($pObject)
 ; Parameters ....: $pObject     - the json object instance
 ; Return values .: Success 		- return an int
@@ -669,14 +611,13 @@ Func _JsonC_ObjectArrayLength($pObject)
 	Return $avRval[0]
 EndFunc
 
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectArrayGetIndex
 ; Description ...: Get the element at specificed index of the array
 ; Syntax ........: _JsonC_ObjectArrayGetIndex($pObject, $iIndex)
 ; Parameters ....: $pObject     - a json object of type json_type_array
 ;				   $iIndex		- the index to get the element at
-; Return values .: Success 		- return the json_object at the specified index
+; Return values .: Success 		- return the json object at the specified index
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
 ; Author ........: SeanGriffin
 ; =================================================================================================
@@ -689,20 +630,10 @@ Func _JsonC_ObjectArrayGetIndex($pObject, $iIndex)
 	Return $tJsonObject
 EndFunc
 
-#cs
-Func _JsonC_ObjectArrayGetIndex2($tObject, $iIndex)
-	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_array_get_idx", "ptr", $tObject, "int", $iIndex)
-	If @error Then Return SetError(1, @error, "") ; DllCall error
-	Local $tJsonObject = DllStructCreate($tagJSONC_OBJECT, $avRval[0])
-	If @error Then Return SetError(1, @error, "") ; DllCall error
-	Return $tJsonObject
-EndFunc
-#ce
-
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_ObjectArrayGetObjects
 ; Description ...: Get all the json objects from an array
-; Syntax ........: _JsonC_ObjectArrayGetObjects($pObject, $iIndex)
+; Syntax ........: _JsonC_ObjectArrayGetObjects($pObject)
 ; Parameters ....: $pObject     - a json object of type json_type_array
 ; Return values .: Success 		- return an AutoIt array of json objects
 ;                  Failure 		- Return a "" (NULL) and set @error to 1
@@ -720,22 +651,6 @@ Func _JsonC_ObjectArrayGetObjects($pObject)
 	Next
 	Return $pObjects
 EndFunc
-
-#cs
-Func _JsonC_ObjectArrayGetObjects2($tObject)
-	Local $avRval = DllCall($__g_hDll_JsonC, "ptr", "json_object_array_get_objects", "ptr", $tObject)
-	If @error Then Return SetError(1, @error, "") ; DllCall error
-	$ArrayLength = _JsonC_ObjectArrayLength2($tObject)
-	Local $tObjects[$ArrayLength]
-	For $i = 0 To $ArrayLength - 1
-		Local $ptrObject = DllStructGetData(DllStructCreate("ptr", $avRval[0] + ($i * $PtrSize)), 1)
-		$tObjects[$i] = $ptrObject
-	Next
-	Return $tObjects
-EndFunc
-#ce
-
-
 
 ; #FUNCTION# ======================================================================================
 ; Name ..........: _JsonC_Shutdown
