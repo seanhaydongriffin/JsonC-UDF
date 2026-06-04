@@ -4,7 +4,7 @@
 
 #region --- Object ---
 
-Func JsonC_Object()
+Func _JsonC_Object()
     Local $o = _AutoItObject_Create()
     _AutoItObject_AddProperty($o, "handle",  $ELSCOPE_PUBLIC, _JsonC_ObjectNewObject())
 
@@ -18,7 +18,7 @@ Func JsonC_Object()
 EndFunc
 
 Func _JsonC_Object_Add($this, $key, $value = Null)
-    Local $jObj = _JsonC_ToObject($value)
+    Local $jObj = __JsonC_ToObject($value)
     _JsonC_ObjectObjectAdd($this.handle, $key, $jObj)
 
     if IsObj($value) Then
@@ -68,7 +68,7 @@ Func _JsonC_Array()
     _AutoItObject_AddMethod($oObj, "toString", "_JsonC_Object_ToString")
 
     ; Add enum
-    _AutoItObject_AddEnum($oObj, "_JsonC_Array_EnumNext" ,"_JsonC_Array_EnumReset")
+    _AutoItObject_AddEnum($oObj, "__JsonC_Array_EnumNext" ,"__JsonC_Array_EnumReset")
 
     Return $oObj
 EndFunc
@@ -76,7 +76,7 @@ EndFunc
 Func _JsonC_Array_Destroy($this)
 EndFunc
 
-Func _JsonC_Array_AddObject($obj, $nextEl = 0)
+Func __JsonC_Array_AddObject($obj, $nextEl = 0)
     Local $oObj = _AutoItObject_Create()
     _AutoItObject_AddProperty($oObj, "handle",  $ELSCOPE_PUBLIC, _JsonC_ObjectNewObject())
     _AutoItObject_AddProperty($oObj, "data", $ELSCOPE_PUBLIC, $obj)
@@ -88,16 +88,16 @@ Func _JsonC_Array_Add($self, $obj)
     Local $iSize = $self.size
     Local $oLast = $self.last
     If $iSize = 0 Then
-        $self.first = _JsonC_Array_AddObject($obj)
+        $self.first = __JsonC_Array_AddObject($obj)
         $self.last = $self.first
 
-        Local $jObj = _JsonC_ToObject($obj)
+        Local $jObj = __JsonC_ToObject($obj)
         _JsonC_ObjectArrayAdd($self.handle, $jObj)
     Else
-        $oLast.next = _JsonC_Array_AddObject($obj)
+        $oLast.next = __JsonC_Array_AddObject($obj)
         $self.last = $oLast.next
 
-        Local $jObj = _JsonC_ToObject($obj)
+        Local $jObj = __JsonC_ToObject($obj)
         _JsonC_ObjectArrayAdd($self.handle, $jObj)
     EndIf
     $self.size = $iSize + 1
@@ -146,12 +146,12 @@ Func _JsonC_Array_Count($self)
     Return $self.size
 EndFunc
 
-Func _JsonC_Array_EnumReset(ByRef $self, ByRef $iter)
+Func __JsonC_Array_EnumReset(ByRef $self, ByRef $iter)
     #forceref $self
     $iterator = 0
 EndFunc
 
-Func _JsonC_Array_EnumNext(ByRef $self, ByRef $iterator)
+Func __JsonC_Array_EnumNext(ByRef $self, ByRef $iterator)
     If $self.size = 0 Then Return SetError(1, 0, 0)
     If Not IsObj($iterator) Then
         $iterator = $self.first
@@ -167,7 +167,7 @@ EndFunc    ;==>_LinkedList_Enumnext
 
 #region --- Miscellaneous ---
 
-Func _JsonC_ToObject($value)
+Func __JsonC_ToObject($value)
     If IsObj($value) Then
         Return $value.handle
     EndIf

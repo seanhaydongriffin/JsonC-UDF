@@ -4,15 +4,15 @@
 _AutoItObject_Startup()
 _JsonC_Startup("json-c.dll")
 
-$jObject = JsonC_Object().add("demographic", "young adults")
+$jObject = _JsonC_Object().add("demographic", "young adults")
 
 $jArrOfValues = _JsonC_Array().add("Paula").add("Cindy").add("Dorothy")
 
 $jArrOfObjects = _JsonC_Array()
-$jArrOfObjects.add(JsonC_Object().add("name", "Alice").add("age", 20).add("height", 175.8).add("isEmployed", True))
-$jArrOfObjects.add(JsonC_Object().add("name", "Roger").add("age", 22).add("height", 165.3).add("isEmployed", False))
+$jArrOfObjects.add(_JsonC_Object().add("name", "Alice").add("age", 20).add("height", 175.8).add("isEmployed", True))
+$jArrOfObjects.add(_JsonC_Object().add("name", "Roger").add("age", 22).add("height", 165.3).add("isEmployed", False))
 
-$jAllObjects = JsonC_Object().add("general", $jObject).add("person", $jArrOfValues).add("personDetails", $jArrOfObjects)
+$jAllObjects = _JsonC_Object().add("general", $jObject).add("person", $jArrOfValues).add("personDetails", $jArrOfObjects)
 
 $jstr = $jAllObjects.toString()
 
