@@ -20,17 +20,17 @@
 
 ## Description
 
-The JsonC UDF is a fast, lightweight, and fully self‑contained JSON library for AutoIt, built on top of the optimized json‑c v0.18 C library.
+The **JsonC UDF** is a fast, lightweight, and fully self‑contained JSON library for AutoIt, built on top of the optimized **json‑c v0.18** C library.
 
 It provides a clean AutoIt interface for parsing, creating, modifying, and serializing JSON using the same high‑performance engine used in many production‑grade C applications.
 
-The UDF embeds both x86 and x64 json‑c DLLs internally and automatically loads the correct one at runtime, so there are no external dependencies and no DLLs to distribute. Just include the UDF and start working with JSON immediately.
+The UDF embeds both **x86** and **x64** json‑c DLLs internally and automatically loads the correct one at runtime, so there are **no external dependencies** and no DLLs to distribute. Just include the UDF and start working with JSON immediately.
 
 Key features:
 
-- High‑performance JSON parsing and serialization via json‑c v0.18
-- Embedded DLLs (x86 + x64) — no external files required
-- Automatic architecture detection
+- **High‑performance JSON parsing and serialization** via json‑c v0.18
+- **Embedded DLLs (x86 + x64)** — no external files required
+- **Automatic architecture detection**
 - Full support for JSON objects, arrays, strings, numbers, booleans, and null
 - Clean AutoIt wrappers for the modern json‑c API
 - Safe memory handling and reference‑counting
