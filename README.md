@@ -28,19 +28,13 @@ The UDF embeds both x86 and x64 json‑c DLLs internally and automatically loads
 
 Key features:
 
-    High‑performance JSON parsing and serialization via json‑c v0.18
-
-    Embedded DLLs (x86 + x64) — no external files required
-
-    Automatic architecture detection
-
-    Full support for JSON objects, arrays, strings, numbers, booleans, and null
-
-    Clean AutoIt wrappers for the modern json‑c API
-
-    Safe memory handling and reference‑counting
-
-    Updated examples demonstrating the new API and best practices
+- High‑performance JSON parsing and serialization via json‑c v0.18
+- Embedded DLLs (x86 + x64) — no external files required
+- Automatic architecture detection
+- Full support for JSON objects, arrays, strings, numbers, booleans, and null
+- Clean AutoIt wrappers for the modern json‑c API
+- Safe memory handling and reference‑counting
+- Updated examples demonstrating the new API and best practices
 
 Ideal for automation frameworks, CDP tooling, data processing, and any AutoIt project that needs fast, reliable JSON support.
 
