@@ -2,7 +2,9 @@
 #include "JsonCEx.au3"
 
 _AutoItObject_Startup()
-_JsonC_Startup("json-c.dll")
+_JsonC_Startup()
+$sVersion = _JsonC_Version()
+ConsoleWrite("json-c version: " & $sVersion & @CRLF)
 
 $jObject = _JsonC_Object().add("demographic", "young adults")
 

@@ -2,7 +2,9 @@
 #include "JsonCEx.au3"
 
 _AutoItObject_Startup()
-_JsonC_Startup("json-c.dll")
+_JsonC_Startup()
+$sVersion = _JsonC_Version()
+ConsoleWrite("json-c version: " & $sVersion & @CRLF)
 
 ; starting with JSON string
 $jStr = '{ "general": { "demographic": "young adults" }, "person": [ "Paula", "Cindy", "Dorothy" ], "personDetails": [ { "name": "Alice", "age": 20, "height": 175.80000000000001, "isEmployed": true }, { "name": "Roger", "age": 22, "height": 165.30000000000001, "isEmployed": false } ] }'

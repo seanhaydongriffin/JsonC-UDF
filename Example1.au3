@@ -1,7 +1,9 @@
 #AutoIt3Wrapper_UseX64=y
-#include "JsonC.au3"
+#include "JsonCEx.au3"
 
-_JsonC_Startup("json-c.dll")
+_JsonC_Startup()
+$sVersion = _JsonC_Version()
+ConsoleWrite("json-c version: " & $sVersion & @CRLF)
 
 $jobj = _JsonC_ObjectNewObject()
 _JsonC_ObjectObjectAdd($jobj, "name", _JsonC_ObjectNewString("Alice"))
@@ -32,9 +34,7 @@ $is_employed = _JsonC_ObjectObjectGet($jobj, "isEmployed")
 ConsoleWrite("IsEmployed type: " & _JsonC_TypeToName(_JsonC_ObjectGetType($is_employed)) & ", value (using GetBoolean): " & _JsonC_ObjectGetBoolean($is_employed) & ", value (using GetValue): " & _JsonC_ObjectGetValue($is_employed) & @CRLF)
 
 $friends = _JsonC_ObjectObjectGet($jobj, "friends")
-$friends_array_list = _JsonC_ObjectGetArray($friends)
-ConsoleWrite("Number of friends (from array list): " & _JsonC_ArrayListLength($friends_array_list) & ", 2nd friend (from array list): " & _JsonC_ObjectGetValue(_JsonC_ArrayListGetIndex($friends_array_list, 1)) & @CRLF)
-
+;$friends_array_list = _JsonC_ObjectGetArray($friends)
 
 ConsoleWrite("Number of friends (from array object): " & _JsonC_ObjectArrayLength($friends) & ", 2nd friend (from array object): " & _JsonC_ObjectGetValue(_JsonC_ObjectArrayGetIndex($friends, 1)) & @CRLF)
 
@@ -49,5 +49,20 @@ ConsoleWrite("Is age a type of int: " & _JsonC_ObjectIsType($age, $JSONC_TYPE_IN
 _JsonC_ObjectObjectDel($jobj, "age")
 ConsoleWrite("JSON string without age: " & _JsonC_ObjectToJsonString($jobj) & @CRLF)
 
-_JsonC_Shutdown()
+$jAlice = _JsonC_ObjectNewObject()
+_JsonC_ObjectObjectAdd($jAlice, "name", _JsonC_ObjectNewString("Alice"))
+_JsonC_ObjectObjectAdd($jAlice, "age", _JsonC_ObjectNewInt(30))
 
+$sAlice = _JsonC_ObjectToJsonString($jAlice)
+ConsoleWrite("Iterating on JSON String: " & $sAlice & @CRLF)
+
+Local $iter = _JsonC_ObjectIterInit($jAlice)
+
+Do
+	Local $key = _JsonC_ObjectIterGetName($iter)
+	Local $valueObj = _JsonC_ObjectIterGetValue($iter)
+	$value = _JsonC_ObjectGetValue($valueObj)
+	ConsoleWrite("Alice " & $key & ": " & $value & @CRLF)
+until _JsonC_ObjectIterNext($iter) = False
+
+_JsonC_Shutdown()
